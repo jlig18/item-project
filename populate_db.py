@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 from models import Base, User, Category, Item 
 
-engine = create_engine('sqlite:///itemcatelog.db')
+engine = create_engine('sqlite:///itemcatalog.db')
 
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
