@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>{{category_name}} Items</title>
+    </head>
+    <body>
+        <h1>{{category_name}} ({{ items|length }} Items)</h1>
+        <ul style='list-style-type: none;'>
+
+        </ul>
+        {% for item in items %}
+        <p>
+            {{item.name}}
+        </p>
+        {% endfor %}
+    </body>
+</html>

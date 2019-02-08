@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>Item Catalog</title>
+    </head>
+    <body>
+        <h1>Item Catalog</h1>
+        <h2>Categories</h2>
+        <ul style='list-style-type: none;'>
+            {% for category in categories %}
+            <li>
+                <a href="{{url_for('showcategory', category=category.name)}}">{{category.name}}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        <h2>Latest Items</h2>
+        <ul style='list-style-type: none;'>
+            {% for item in items %} 
+            <li>
+                {{item.name}} <span id='itemcategory'>({{item.category.name}})</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>
