@@ -10,6 +10,7 @@
             <label for="item_desc">Description</label>
             <input type="text" name="item_desc" id="item_desc"> 
             <select name="category" id="categories">
+                <option id="def_category" selected value="" disabled>Select Category</option>
                 {% for category in categories %}
                 <option value="{{category.name}}">{{category.name}}</option>
                 {% endfor %} 
