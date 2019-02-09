@@ -21,6 +21,11 @@ def index():
     last_items = session.query(Item).order_by('Item.id desc').limit(10).all() 
     return render_template('index.html', categories=categories, items=last_items)  
 
+@app.route('/categories/')
+def showcategorylist(): 
+    categories = session.query(Category).all() 
+    return render_template('showcategorylist.html', categories=categories) 
+
 @app.route('/<category>/')
 def showcategory(category): 
     db_category = session.query(Category).filter_by(name=category).first()
@@ -30,10 +35,10 @@ def showcategory(category):
     else:
         return redirect('/')  # TODO non existent
 
-# @app.route('/<category>/new/', methods=['POST', 'GET'])
-# def newCategory(): 
-#     if request.method == 'GET': 
-#         return render_template('newcategory.html')
+@app.route('/categories/new/', methods=['POST', 'GET'])
+def newCategory(): 
+    if request.method == 'GET': 
+        return render_template('newcategory.html')
 
 @app.route('/<category>/<item>/') 
 def showitem(category, item): 
@@ -48,9 +53,7 @@ def showitem(category, item):
 @app.route('/new/', methods=['POST', 'GET'])
 def newItem():
     categories = session.query(Category).all() 
-    if request.method == 'GET': 
-        return render_template('newitem.html', categories=categories)
-    elif request.method == 'POST': 
+    if request.method == 'POST': 
         name = request.form['item_name'] 
         description = request.form['item_desc'] 
         category_id = session.query(Category).filter_by(name=request.form['category']).first()
@@ -59,6 +62,8 @@ def newItem():
         session.add(newItem)
         session.commit() 
         return redirect('/') # TODO successful update
+    else:
+         return render_template('newitem.html', categories=categories)
 
 @app.route('/<category>/<item>/edit/', methods=['POST', 'GET']) 
 def editItem(category, item): 
@@ -66,10 +71,7 @@ def editItem(category, item):
     currentItem = session.query(Item).filter_by(name=item.replace('_', ' '), category_id=db_category.id).first() 
     if db_category is None or item is None: 
         return redirect('/') # TODO non existent
-    if request.method == 'GET': 
-        categories = session.query(Category).all() 
-        return render_template('edititem.html', categories=categories, item=currentItem)
-    elif request.method == 'POST': 
+    if request.method == 'POST': 
         print(request.form)
         updateItem = session.query(Item).filter_by(name=item.replace('_', ' '), category_id=db_category.id).first()
         if request.form['item_name']: 
@@ -81,6 +83,9 @@ def editItem(category, item):
         session.add(updateItem)
         session.commit() 
         return redirect('/') # TODO successful update
+    else:
+        categories = session.query(Category).all() 
+        return render_template('edititem.html', categories=categories, item=currentItem)
 
 @app.route('/<category>/<item>/delete/', methods=['POST', 'GET'])
 def deleteItem(category, item):
@@ -88,9 +93,7 @@ def deleteItem(category, item):
     item = session.query(Item).filter_by(name=item.replace('_', ' '), category_id=db_category.id).first() 
     if db_category is None or item is None: 
         return redirect('/') # TODO non existent
-    if request.method == 'GET': 
-        return render_template('deleteitem.html', item=item) 
-    elif request.method =='POST': 
+    if request.method == 'POST': 
         if request.form['button'] == 'Confirm': 
             session.delete(item) 
             session.commit() 
@@ -99,6 +102,9 @@ def deleteItem(category, item):
         else: 
             return redirect('/') 
         return redirect('/') # TODO non existent
+    else: 
+        return render_template('deleteitem.html', item=item) 
+        
 
 if __name__ == '__main__':
     app.debug = True

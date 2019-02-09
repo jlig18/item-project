@@ -4,6 +4,7 @@
     </head>
     <body>
         <h1>{{category_name}} ({{ items|length }} Items)</h1>
+        <a href="{{url_for('newCategory')}}">New Category</a>
         <ul style='list-style-type: none;'>
             {% for item in items %}
             <li>
