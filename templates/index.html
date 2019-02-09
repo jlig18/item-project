@@ -16,7 +16,8 @@
         <ul style='list-style-type: none;'>
             {% for item in items %} 
             <li>
-                {{item.name}} <span id='itemcategory'>({{item.category.name}})</span>
+                <a href="{{url_for('showitem', category=item.category.name, item = item.name.replace(' ', ''))}}">
+                    {{item.name}} </a> <span id='itemcategory'>({{item.category.name}})</span>
             </li>
             {% endfor %}
         </ul>

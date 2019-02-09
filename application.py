@@ -28,6 +28,12 @@ def showcategory(category):
     else:
         return redirect('/') # TODO: Change to better reponse when accessing non-existent category
 
+@app.route('/<category>/<item>') 
+def showitem(category, item): 
+    db_category = session.query(Category).filter_by(name=category).first() 
+    item = session.query(Item).filter_by(category_id=db_category.id).first() 
+    return render_template('item.html', item=item)
+
 
 if __name__ == '__main__':
     app.debug = True
