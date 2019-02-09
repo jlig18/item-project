@@ -5,6 +5,7 @@
     <body>
         <h1>Item Catalog</h1>
         <a href="{{url_for('newItem')}}">New Item</a>
+        <a href="{{url_for('newCategory')}}">New Category</a>
         <h2>Categories</h2>
         <ul style='list-style-type: none;'>
             {% for category in categories %}

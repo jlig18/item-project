@@ -21,11 +21,6 @@ def index():
     last_items = session.query(Item).order_by('Item.id desc').limit(10).all() 
     return render_template('index.html', categories=categories, items=last_items)  
 
-@app.route('/categories/')
-def showcategorylist(): 
-    categories = session.query(Category).all() 
-    return render_template('showcategorylist.html', categories=categories) 
-
 @app.route('/<category>/')
 def showcategory(category): 
     db_category = session.query(Category).filter_by(name=category).first()
@@ -37,8 +32,42 @@ def showcategory(category):
 
 @app.route('/categories/new/', methods=['POST', 'GET'])
 def newCategory(): 
-    if request.method == 'GET': 
+    if request.method == 'POST':
+        if request.form['category_name'] is not None: 
+            newCat = Category(name=request.form['category_name'])
+            session.add(newCat)
+            session.commit() 
+            return redirect('/') 
+        else:
+            return redirect('/') 
+    else:
         return render_template('newcategory.html')
+
+@app.route('/<category>/delete/', methods=['POST', 'GET'])
+def deleteCategory(category):
+    if request.method == 'POST': 
+        deletedCategory = session.query(Category).filter_by(name=category).first() 
+        items = session.query(Item).filter_by(category_id=deletedCategory.id).delete()
+        session.delete(deletedCategory)
+        session.commit() 
+        return redirect('/') 
+    else:
+        return render_template('deletecategory.html', category=category) 
+
+@app.route('/<category>/edit/', methods=['POST', 'GET']) 
+def editCategory(category):
+    if request.method == 'POST': 
+        if request.form['category_name'] is not None:
+            editedCategory = session.query(Category).filter_by(name=category).first()
+            editedCategory.name = request.form['category_name']
+            session.add(editedCategory)
+            session.commit() 
+            return redirect('/')
+        else:
+            return redirect('/') 
+    else:
+        return render_template('editcategory.html', category=category) 
+        
 
 @app.route('/<category>/<item>/') 
 def showitem(category, item): 
@@ -94,17 +123,13 @@ def deleteItem(category, item):
     if db_category is None or item is None: 
         return redirect('/') # TODO non existent
     if request.method == 'POST': 
-        if request.form['button'] == 'Confirm': 
-            session.delete(item) 
-            session.commit() 
-            return redirect('/') 
-            # TODO successful update
-        else: 
-            return redirect('/') 
-        return redirect('/') # TODO non existent
+        session.delete(item) 
+        session.commit() 
+        return redirect('/') 
     else: 
         return render_template('deleteitem.html', item=item) 
-        
+
+
 
 if __name__ == '__main__':
     app.debug = True
