@@ -5,12 +5,12 @@
     <body>
         <h1>{{category_name}} ({{ items|length }} Items)</h1>
         <ul style='list-style-type: none;'>
-
+            {% for item in items %}
+            <li>
+                <a href="{{url_for('showitem', category=item.category.name, item = item.name.replace(' ', '_'))}}">{{item.name}} </a>
+            </li>
+            {% endfor %}
         </ul>
-        {% for item in items %}
-        <p>
-            {{item.name}}
-        </p>
-        {% endfor %}
+        
     </body>
 </html>

@@ -4,6 +4,7 @@
     </head>
     <body>
         <h1>Item Catalog</h1>
+        <a href="{{url_for('newItem')}}">New Item</a>
         <h2>Categories</h2>
         <ul style='list-style-type: none;'>
             {% for category in categories %}
@@ -16,7 +17,7 @@
         <ul style='list-style-type: none;'>
             {% for item in items %} 
             <li>
-                <a href="{{url_for('showitem', category=item.category.name, item = item.name.replace(' ', ''))}}">
+                <a href="{{url_for('showitem', category=item.category.name, item = item.name.replace(' ', '_'))}}">
                     {{item.name}} </a> <span id='itemcategory'>({{item.category.name}})</span>
             </li>
             {% endfor %}
