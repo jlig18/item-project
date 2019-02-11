@@ -5,7 +5,7 @@
     <body>
         <h1>Are you sure you want to delete {{category}}?</h1>
         <h2>All items associated with it will also be deleted.</h2>
-        <form action="{{url_for('deleteCategory', category=category)}}" method="POST">
+        <form action="{{url_for('deleteCategory', category=category.replace(' ', '_'))}}" method="POST">
             <input type="submit" name="button" value="Submit">
         </form>
     </body>

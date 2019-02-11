@@ -10,7 +10,7 @@
         <ul style='list-style-type: none;'>
             {% for category in categories %}
             <li>
-                <a href="{{url_for('showcategory', category=category.name)}}">{{category.name}}</a>
+                <a href="{{url_for('showcategory', category=category.name.replace(' ', '_'))}}">{{category.name}}</a>
             </li>
             {% endfor %}
         </ul>
@@ -18,7 +18,7 @@
         <ul style='list-style-type: none;'>
             {% for item in items %} 
             <li>
-                <a href="{{url_for('showitem', category=item.category.name, item = item.name.replace(' ', '_'))}}">
+                <a href="{{url_for('showitem', category=item.category.name.replace(' ', '_'), item = item.name.replace(' ', '_'))}}">
                     {{item.name}} </a> <span id='itemcategory'>({{item.category.name}})</span>
             </li>
             {% endfor %}

@@ -4,9 +4,13 @@ from models import Base, Category, Item, User
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
+import httplib2
 
 ''' TODO successful update: Add message indicating sucess
-    TODO non existant data: Add message and redirect back one page'''
+    TODO non existant data: Add message and redirect back one page
+    TODO temporary backend check for category when creating new item'''
 
 engine = create_engine('sqlite:///itemcatalog.db', connect_args={'check_same_thread': False}) 
 
@@ -21,16 +25,20 @@ def index():
     last_items = session.query(Item).order_by('Item.id desc').limit(10).all() 
     return render_template('index.html', categories=categories, items=last_items)  
 
+@app.route('/glogin/'):
+def login(provider):
+
+
 @app.route('/<category>/')
 def showcategory(category): 
-    db_category = session.query(Category).filter_by(name=category).first()
+    db_category = session.query(Category).filter_by(name=category.replace('_', ' ')).first()
     if db_category is not None:
         items = session.query(Item).filter_by(category_id=db_category.id).all() 
         return render_template('showcategory.html', category_name=db_category.name, items=items) 
     else:
         return redirect('/')  # TODO non existent
 
-@app.route('/categories/new/', methods=['POST', 'GET'])
+@app.route('/category/new/', methods=['POST', 'GET'])
 def newCategory(): 
     if request.method == 'POST':
         if request.form['category_name'] is not None: 
@@ -46,7 +54,7 @@ def newCategory():
 @app.route('/<category>/delete/', methods=['POST', 'GET'])
 def deleteCategory(category):
     if request.method == 'POST': 
-        deletedCategory = session.query(Category).filter_by(name=category).first() 
+        deletedCategory = session.query(Category).filter_by(name=category.replace('_', ' ')).first() 
         items = session.query(Item).filter_by(category_id=deletedCategory.id).delete()
         session.delete(deletedCategory)
         session.commit() 
@@ -58,7 +66,7 @@ def deleteCategory(category):
 def editCategory(category):
     if request.method == 'POST': 
         if request.form['category_name'] is not None:
-            editedCategory = session.query(Category).filter_by(name=category).first()
+            editedCategory = session.query(Category).filter_by(name=category.replace('_', ' ')).first()
             editedCategory.name = request.form['category_name']
             session.add(editedCategory)
             session.commit() 
@@ -71,7 +79,7 @@ def editCategory(category):
 
 @app.route('/<category>/<item>/') 
 def showitem(category, item): 
-    db_category = session.query(Category).filter_by(name=category).first() 
+    db_category = session.query(Category).filter_by(name=category.replace('_', ' ')).first() 
     item = session.query(Item).filter_by(name=item.replace('_',' '), category_id=db_category.id).first() 
      # if both category and item are in the database render template
     if db_category is not None and item is not None: 
@@ -83,6 +91,8 @@ def showitem(category, item):
 def newItem():
     categories = session.query(Category).all() 
     if request.method == 'POST': 
+        if request.form['category'] == "none":
+            return redirect('/')
         name = request.form['item_name'] 
         description = request.form['item_desc'] 
         category_id = session.query(Category).filter_by(name=request.form['category']).first()

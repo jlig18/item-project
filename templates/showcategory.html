@@ -3,17 +3,21 @@
         <title>{{category_name}} Items</title>
     </head>
     <body>
+        {% if items|length == 1 %}
+        <h1>{{category_name}} ({{ items|length }} Item)</h1>
+        {% else %}
         <h1>{{category_name}} ({{ items|length }} Items)</h1>
+        {% endif %}
         <ul style='list-style-type: none;'>
             {% for item in items %}
             <li>
-                <a href="{{url_for('showitem', category=item.category.name, item = item.name.replace(' ', '_'))}}">{{item.name}} </a>
+                <a href="{{url_for('showitem', category=item.category.name.replace(' ', '_'), item = item.name.replace(' ', '_'))}}">{{item.name}} </a>
             </li>
             {% endfor %}
         </ul>
         <div>
-            <a href="{{url_for('editCategory', category=category_name)}}">Edit</a>
-            <a href="{{url_for('deleteCategory', category=category_name)}}">Delete</a>
+            <a href="{{url_for('editCategory', category=category_name.replace(' ', '_'))}}">Edit</a>
+            <a href="{{url_for('deleteCategory', category=category_name.replace(' ', '_'))}}">Delete</a>
         </div>
     </body>
 </html>
